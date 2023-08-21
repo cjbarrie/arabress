@@ -49,7 +49,6 @@ process_cos_sim <-
   }
 
 # Versions to process
-# sample_sizes <- c(1.5e6) #TODO change back to all
 sample_sizes <- c(1e4, 5e4, 1e5, 5e5, 1e6, 1.5e6)
 sample_sizes <- sapply(sample_sizes, function(x) format(x, scientific = FALSE))
 versions <- paste0(sample_sizes, "30k")
@@ -77,7 +76,7 @@ process_version <- function(version) {
   # If you need to save the results for each country
   for (i in seq_along(countries)) {
     # Create a subdirectory for the country if it doesn't exist
-    dir_name <- paste0("data/output/cos_sims_test/", countries[i]) #TODO change away from test 
+    dir_name <- paste0("data/output/cos_sims/", countries[i])
     if (!dir.exists(dir_name)) {
       dir.create(dir_name)
     }
