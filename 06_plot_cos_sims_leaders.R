@@ -5,8 +5,8 @@ library(dplyr)
 # Define the list of countries
 countries <- c("djazairess", "maghress", "masress", "sauress", "turess")
 # Versions to process
-sample_sizes <- c(1.5e6) #TODO change back to all
-# sample_sizes <- c(1e4, 5e4, 1e5, 5e5, 1e6, 1.5e6)
+# sample_sizes <- c(1.5e6) #TODO change back to all
+sample_sizes <- c(1e4, 5e4, 1e5, 5e5, 1e6, 1.5e6)
 formatted_sample_sizes <- sapply(sample_sizes, function(x) format(x, scientific = FALSE))
 versions <- paste0(formatted_sample_sizes, "30k")
 
@@ -68,7 +68,7 @@ ggplot(all_data, aes(x = yearwk, y = cos_sim, col = version)) +
         strip.text = element_text(size = 24)) +  # Increased facet title size
   facet_wrap(~ country_name, ncol = 5)
 
-ggsave("plots/combinedplot_all_test.png", units = "in",
+ggsave("plots/combinedplot_all_test.png", units = "in", #TODO remove test suffix
        width = 20, height =5, dpi = 300)
 
 colors_for_versions <- c("grey50","black")  # modify as needed
@@ -111,7 +111,7 @@ all_data %>%
   facet_wrap( ~ country_name, ncol = 5)
 
 ggsave(
-  "plots/combinedplot_top_test.png",
+  "plots/combinedplot_top_test.png", #TODO remove test suffix
   units = "in",
   width = 20,
   height = 5,

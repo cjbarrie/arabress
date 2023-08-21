@@ -155,7 +155,7 @@ get_similarity_scores <- function(x,
                           y = y_matrix, 
                           method = 'cosine', norm = norm)
   
-  group_first_val <- rowMeans(group_first_val)
+  group_first_val <- rowMeans(group_first_val) #TODO not necessary if first/second vec of length 1
   group_first_val <- tibble(group = factor(names(group_first_val)), 
                             first_val = unname(group_first_val))
   
@@ -171,12 +171,12 @@ get_similarity_scores <- function(x,
                           y = y_matrix, 
                           method = 'cosine', norm = norm)
   
-  group_sec_val <- rowMeans(group_sec_val)
+  group_sec_val <- rowMeans(group_sec_val) #TODO not necessary if first/second vec of length 1
   group_sec_val <- tibble(group = factor(names(group_sec_val)), 
                           sec_val = unname(group_sec_val))
   
   result <- left_join(group_first_val, group_sec_val, by = "group") %>% 
-    mutate(val = (1)*first_val + (-1)*sec_val) %>% #TODO here could add also subtraction alternative
+    mutate(val = (1)*first_val + (-1)*sec_val) %>%
     select(group, val)
   
   return(result)

@@ -88,7 +88,7 @@ cos_simsdf_all <- get_similarity_scores(x = nws_corpus,
 
 
 
-cos_simsdf_all %>%
+cos_simsdf_all%>%
   mutate(group = as.Date(group)) %>%
   arrange(group) %>%
   rename(yearwk = group,
@@ -102,7 +102,7 @@ cos_simsdf_all %>%
     fill = "white"
   ) +
   ylim(-.2, 0.2)
-  
+
 
 #############################
 
