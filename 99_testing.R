@@ -118,10 +118,6 @@ cos_simsdf_all %>%
 
 
 
-
-country_name <- "masress"
-
-
 library(quanteda)
 library(conText)
 library(dplyr)
@@ -130,6 +126,8 @@ library(readr)
 library(ggplot2)
 source("99_utils.R")
 set.seed(123L)
+
+country_name <- "masress"
 
 nws_corpus <-
   readRDS(
@@ -140,26 +138,40 @@ nws_corpus <-
     )
   )
 
-nws_corpus <- nws_corpus %>%
-  sample_frac(.1)
+# nws_corpus <- nws_corpus %>%
+#   filter(yearwk >= "2010-01-01" & yearwk <= "2012-01-01") %>%
+#   sample_frac(.1)
+
+sample_sizes <- c(1e4, 5e4, 1e5, 5e5, 1e6, 1.5e6)
+sample_sizes <- sapply(sample_sizes, function(x) format(x, scientific = FALSE))
+versions <- paste0(sample_sizes, "30k")
+version <- versions[6]
+
+local_transform <-
+  readRDS(paste0(
+    "data/embedding_combined/combined_local_transform",
+    version,
+    ".rds"
+  ))
+local_glove <-
+  readRDS(paste0(
+    "data/embedding_combined/combined_local_glove",
+    version,
+    ".rds"
+  ))
 
 
-
-x = nws_corpus;
-target = "TARGETWORD";
-
-
-pre_trained = local_glove;
-transform_matrix = local_transform;
-
-remove_punct = FALSE;
-remove_symbols = FALSE; 
-remove_numbers = FALSE; 
-remove_separators = FALSE;
-valuetype = "fixed";
-window = 6L;
-hard_cut = FALSE;
-case_insensitive = TRUE
+# pre_trained = local_glove;
+# transform_matrix = local_transform;
+# 
+# remove_punct = FALSE;
+# remove_symbols = FALSE; 
+# remove_numbers = FALSE; 
+# remove_separators = FALSE;
+# valuetype = "fixed";
+# window = 6L;
+# hard_cut = FALSE;
+# case_insensitive = TRUE
 
 
 
@@ -183,12 +195,17 @@ rownames(local_glovep) <- v # name diff_ar
 # get vector of year-weeks needed as seqvar for get_seq_cos_sim()
 yearwk <- nws_corpus$yearwk
 
-x = nws_corpus$content
-seqvar = yearwk
-target = "TARGETWORD"
-candidates = "diff_ar"
-pre_trained = local_glovep
-transform_matrix = local_transform
+# x = nws_corpus$content
+# seqvar = yearwk
+# target = "TARGETWORD"
+# candidates = "diff_ar"
+# pre_trained = local_glovep
+# transform_matrix = local_transform
+# window = 6
+# valuetype = "fixed"
+# case_insensitive = TRUE
+# hard_cut = FALSE
+# verbose = TRUE
 
 cos_simsdf_all <-
   get_seq_cos_sim(
@@ -197,5 +214,16 @@ cos_simsdf_all <-
     target = "TARGETWORD",
     candidates = "diff_ar",
     pre_trained = local_glovep,
-    transform_matrix = local_transform
+    transform_matrix = local_transform,
+    norm = "l2"
+  )
+
+cos_simsdf_all %>%
+  ggplot(aes(x = seqvar, y = diff_ar)) +
+  geom_point(alpha = .25) +
+  geom_smooth(
+    method = "loess",
+    size = 1,
+    span = .5,
+    fill = "white"
   )
