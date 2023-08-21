@@ -48,6 +48,7 @@ process_cos_sim <-
                                             second_vec = second_ar, 
                                             pre_trained = local_glove,
                                             transform_matrix = local_transform,
+                                            window = 12L,
                                             group_var = "yearwk",
                                             norm = "l2")
     

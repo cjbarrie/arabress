@@ -120,7 +120,7 @@ get_similarity_scores <- function(x,
                                   remove_numbers = FALSE, 
                                   remove_separators = FALSE,
                                   valuetype = "fixed",
-                                  window = 6L,
+                                  window = 12L,
                                   hard_cut = FALSE,
                                   case_insensitive = TRUE) {
   
@@ -285,4 +285,76 @@ find_cos_sim <- function(target_embedding,
 
       row.names(cos_sim) <- candidates
       return(cos_sim)}
+}
+
+
+
+
+
+
+get_similarity_scores_new <- function(x, 
+                                  target = "TARGETWORD", 
+                                  first_vec, 
+                                  second_vec, 
+                                  pre_trained, 
+                                  transform_matrix,
+                                  group_var,
+                                  norm = "l2",
+                                  remove_punct = FALSE, 
+                                  remove_symbols = FALSE, 
+                                  remove_numbers = FALSE, 
+                                  remove_separators = FALSE,
+                                  valuetype = "fixed",
+                                  window = 6L,
+                                  hard_cut = FALSE,
+                                  case_insensitive = TRUE) {
+  
+  # Tokenize corpus
+  toks <- tokens(x, remove_punct = remove_punct, remove_symbols = remove_symbols, 
+                 remove_numbers = remove_numbers, remove_separators = remove_separators)
+  
+  # Build tokenized corpus of contexts surrounding the target word
+  target_toks <- tokens_context(x = toks, pattern = target, 
+                                valuetype = valuetype, window = window, 
+                                hard_cut = hard_cut, case_insensitive = case_insensitive)
+  
+  # Compute ALC embeddings
+  target_dfm <- dfm(target_toks)
+  target_dem <- dem(x = target_dfm, pre_trained = pre_trained, 
+                    transform = TRUE, transform_matrix = transform_matrix, 
+                    verbose = TRUE)
+  
+  # Aggregate embeddings over the grouping variable
+  target_dem_grouped <- dem_group(target_dem, 
+                                  groups = target_dem@docvars[[group_var]])
+  
+  # get vector of opposition and support words from pre-trained local embedding layer
+  firstvec = matrix(pre_trained[first_vec, ], nrow = 1)
+  secondvec = matrix(pre_trained[second_ar, ], nrow = 1)
+  
+  # subtract support from opposition to give opposition axis 
+  #TODO try out multiply by -1
+  diff_vec = firstvec - secondvec
+  
+  # add into pretrained embedding
+  pre_trained <- rbind(pre_trained, diff_vec)
+  v <- rownames(pre_trained) # get rownames
+  v[nrow(pre_trained)] <- "diff_vec" # name diff_vec
+  rownames(pre_trained) <- v # name diff_vec
+  
+  
+  y_matrix = t(matrix(pre_trained["diff_vec", ]))
+  
+  # Cosine similarity for first vector of terms
+  group_val <- sim2(target_dem_grouped,
+                    y = y_matrix,
+                    method = 'cosine', norm = norm)
+  
+  #TODO this step is unnecessary if first_vec is of length 1
+  group_val <- rowMeans(group_val)
+  
+  result <- tibble(group = factor(names(group_val)), 
+                            first_val = unname(group_val))
+
+  return(result)
 }
