@@ -10,12 +10,18 @@ set.seed(123L)
 countries <-
   c("djazairess", "maghress", "masress", "sauress", "turess")
 
+# get synonym words for old expanded dictionary
+# oppterms <- read_csv("data/terms_opp.csv") %>%
+#   filter(include == 1)
+# oppterms <- oppterms$term
+# supterms <- read_csv("data/terms_sup.csv") %>%
+#   filter(include == 1)
+# supterms <- supterms$term
 
-# get synonym words for expanded dictionary
-oppterms <- read_csv("data/terms_opp.csv") %>%
+oppterms <- read_csv("data/pretrained_embedding/oppterms_manual.csv") %>%
   filter(include == 1)
 oppterms <- oppterms$term
-supterms <- read_csv("data/terms_sup.csv") %>%
+supterms <- read_csv("data/pretrained_embedding/supterms_manual.csv") %>%
   filter(include == 1)
 supterms <- supterms$term
 
@@ -85,7 +91,7 @@ process_version <- function(version) {
   # If you need to save the results for each country
   for (i in seq_along(countries)) {
     # Create a subdirectory for the country if it doesn't exist
-    dir_name <- paste0("data/output/cos_sims_expanded/", countries[i])
+    dir_name <- paste0("data/output/cos_sims_test/", countries[i])
     if (!dir.exists(dir_name)) {
       dir.create(dir_name)
     }

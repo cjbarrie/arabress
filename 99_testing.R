@@ -359,3 +359,28 @@ target_embedded <- embed_target(target_toks_old$context,
 
 
 # is it because of the context width ?
+
+
+
+
+
+
+
+cos_simsdf_all <- readRDS("/Users/cbarrie6/Dropbox/edbrgh_projects/arabress_medcrit2/data/output/cos_sims_test/masress/cos_simsdf_all150000030k.rds")
+
+
+cos_simsdf_all%>%
+  mutate(group = as.Date(group)) %>%
+  arrange(group) %>%
+  rename(yearwk = group,
+         cos_sim = val) %>%
+  ggplot(aes(x = yearwk, y = cos_sim)) +
+  geom_point(alpha = .25) +
+  geom_smooth(
+    method = "loess",
+    size = 1,
+    span = .5,
+    fill = "white"
+  ) +
+  ylim(-.2, 0.2)
+

@@ -51,7 +51,7 @@ ggplot(all_data, aes(x = yearwk, y = cos_sim, col = version)) +
   labs(x = "Year-week", 
        y = "Cosine similarity, leaders : opposition index",
        color = "Version") + # Label for the color legend
-  ylim(-.2, 0.2) +
+  ylim(-10, 10) +
   scale_color_manual(values = colors_for_versions) +
   theme(legend.position = "right",
         axis.text.x = element_text(size=20),
@@ -87,7 +87,7 @@ all_data %>%
   labs(x = "Year-week",
        y = "Cosine similarity, leaders : opposition index",
        color = "Version") + # Label for the color legend
-  ylim(-.2, 0.2) +
+  ylim(-10, 10) +
   scale_color_manual(values = colors_for_versions) +
   theme(
     legend.position = "right",
