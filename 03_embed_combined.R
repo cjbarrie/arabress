@@ -6,8 +6,6 @@ library(dplyr)
 library(tidylog)
 set.seed(123L)
 
-#TODO atm. have only done 1m and 1.5m samples. Need still to do the others
-
 # Define the list of countries
 countries <-
   c("djazairess", "maghress", "masress", "sauress", "turess")
