@@ -56,9 +56,8 @@ for (total_size in total_sample_sizes) {
 }
 
 # List of total sample sizes
-total_sample_sizes <- c(1e4, 5e4, 1e5, 5e5)
+total_sample_sizes <- c(1e4, 5e4, 1e5, 5e5, 1e6, 1.5e6)
 total_sample_sizes <- sapply(total_sample_sizes, function(x) format(x, scientific = FALSE))
-# total_sample_sizes <- c(1e6, 1.5e6)
 
 # Destination path
 destination_path <- "data/embedding_combined/"
@@ -108,4 +107,20 @@ for (total_size in total_sample_sizes) {
   
   local_transform <- compute_transform(x = toks_fcm, pre_trained = local_glove, weighting = 100)
   saveRDS(local_transform, file = paste0(destination_path, "combined_local_transform", total_size, "30k.rds"))
+}
+
+
+# Get transform matrix of varying sizes for 1.5m embedding:
+total_size <- total_sample_sizes[6]
+weightings <- c(1, 10, 50, 100, 500, 1000, 2000, 10000, 50000, 100000) 
+weightings <- sapply(weightings, function(x) format(x, scientific = FALSE))
+
+toks_fcm <- readRDS(file = paste0(destination_path, "combined_fcm", total_size, "30k.rds"))
+local_glove <- readRDS(file = paste0(destination_path, "combined_local_glove", total_size, "30k.rds"))
+
+
+for (weight in weightings) {
+  cat("Getting transform matrix for weight ", weight, '\n')
+  local_transform <- compute_transform(x = toks_fcm, pre_trained = local_glove, weighting = weight)
+  saveRDS(local_transform, file = paste0(destination_path, "combined_local_transform", total_size, "_weight", weight, "30k.rds"))
 }
