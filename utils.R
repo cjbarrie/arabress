@@ -1,4 +1,4 @@
-# Old function
+# Old function originally used to get masress and turess scores (does the same as new function optimized for quanteda)
 # get_seq_cos_sim <- function (x, seqvar, target, candidates, pre_trained, transform_matrix, norm,
 #                              window = 6, valuetype = "fixed", case_insensitive = TRUE, 
 #                              hard_cut = FALSE, verbose = TRUE) 

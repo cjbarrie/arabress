@@ -5,15 +5,14 @@ library(dplyr)
 # Define the list of countries
 countries <- c("djazairess", "maghress", "masress", "sauress", "turess")
 # Versions to process based on weights
-weights <- c(1, 10, 50, 100, 500, 1000, 2000, 10000, 50000, 100000)
-weights <- sapply(weights, function(x) format(x, scientific = FALSE))
-versions <- paste0("1500000_weight", weights)
+feats <- c("1k", "3k", "5k", "10k", "15k", "20k", "30k")
+versions <- paste0("1500000", feats)
 
 # Iterate through both versions and read the corresponding data
 all_data <- bind_rows(lapply(versions, function(version) {
   bind_rows(lapply(countries, function(country) {
     cos_simsdf <-
-      readRDS(paste0("data/output/cos_sims/", country, "/", "cos_simsdf_all", version, "30k.rds"))
+      readRDS(paste0("data/output/cos_sims/", country, "/", "cos_simsdf_all", version, ".rds"))
     cos_simsdf %>%
       mutate(group = as.Date(group)) %>%
       arrange(group) %>%
@@ -42,23 +41,20 @@ all_data <- all_data %>%
 
 # Define versions and their desired order
 versions <- c(
-  "1500000_weight1",
-  "1500000_weight10",
-  "1500000_weight50",
-  "1500000_weight100",
-  "1500000_weight500",
-  "1500000_weight1000",
-  "1500000_weight2000",
-  "1500000_weight10000",
-  "1500000_weight50000",
-  "1500000_weight100000"
+  "15000001k",
+  "15000003k",
+  "15000005k",
+  "150000010k",
+  "150000015k",
+  "150000020k",
+  "150000030k"
 )
 
 # Ensure versions in all_data are ordered as per the desired sequence
 all_data$version <- factor(all_data$version, levels = versions)
 
 # Then plot the data:
-colors_for_versions <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999", "#AD8BC9", "#FFC085")
+colors_for_versions <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 ggplot(all_data, aes(x = yearwk, y = cos_sim, col = version)) +
   geom_point(alpha = 0.1, size = 2) + # Increased point size and reduced transparency
@@ -91,12 +87,13 @@ ggplot(all_data, aes(x = yearwk, y = cos_sim, col = version)) +
   facet_wrap( ~ country_name, ncol = 5)
 
 ggsave(
-  "plots/combinedplot_all_vary_transform.png",
+  "plots/combinedplot_all_vary_feats.png",
   units = "in",
   width = 20,
   height = 5,
   dpi = 300
 )
+
 
 labeller_func <- labeller(country_name = function(x) c(rep("", length(x) - 1), x))
 
@@ -130,6 +127,5 @@ ggplot(all_data, aes(x = yearwk, y = cos_sim, col = version)) +
         strip.text = element_text(size = 25)) + 
   facet_grid(rows = vars(country_name), cols = vars(version), switch = "y")
 
-ggsave("plots/combinedplot_all_vary_transform_grid.png", units = "in",
+ggsave("plots/combinedplot_all_vary_feats_grid.png", units = "in",
        width = 40, height =20, dpi = 300)
-  
